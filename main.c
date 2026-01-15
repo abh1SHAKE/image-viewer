@@ -53,10 +53,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if (is_p6) {
-        fgetc(in);
-    }
-
     // Calculate scale to preserve aspect ratio
     float scale_x = (float)MAX_WIN_W / width;
     float scale_y = (float)MAX_WIN_H / height;
