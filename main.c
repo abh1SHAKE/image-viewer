@@ -4,10 +4,19 @@
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
+#ifdef _WIN32
+#include <fcntl.h>
+#include <io.h>
+#endif
+
 #define MAX_WIN_W 1280
 #define MAX_WIN_H 720
 
 int main(int argc, char *argv[]) {
+    #ifdef _WIN32
+    _setmode(_fileno(stdin), _O_BINARY);
+    #endif
+
     FILE *in = stdin;
     char line[1024];
 
@@ -42,6 +51,10 @@ int main(int argc, char *argv[]) {
     if (maxval != 255) {
         fprintf(stderr, "Only maxval 255 supported\n");
         return 1;
+    }
+
+    if (is_p6) {
+        fgetc(in);
     }
 
     // Clamp window size
