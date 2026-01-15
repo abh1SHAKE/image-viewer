@@ -57,12 +57,18 @@ int main(int argc, char *argv[]) {
         fgetc(in);
     }
 
-    // Clamp window size
-    int win_w = width > MAX_WIN_W ? MAX_WIN_W : width;
-    int win_h = height > MAX_WIN_H ? MAX_WIN_H : height;
+    // Calculate scale to preserve aspect ratio
+    float scale_x = (float)MAX_WIN_W / width;
+    float scale_y = (float)MAX_WIN_H / height;
+    float scale = (scale_x < scale_y) ? scale_x : scale_y;
 
-    float sx = (float) win_w / width;
-    float sy = (float) win_h / height;
+    // Clamp to 1.0 if image is smaller than max bounds
+    if (scale > 1.0f) {
+        scale = 1.0f;
+    }
+
+    int win_w = (int)(width * scale);
+    int win_h = (int)(height * scale);
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
@@ -107,10 +113,10 @@ int main(int argc, char *argv[]) {
             Uint32 color = SDL_MapRGB(psurface -> format, r, g, b);
             
             SDL_Rect pixel = {
-                (int)(x * sx),
-                (int)(y * sy),
-                (int)(sx + 1),
-                (int)(sy + 1),
+                (int)(x * scale),
+                (int)(y * scale),
+                (int)(scale + 1),
+                (int)(scale + 1),
             };
 
             SDL_FillRect(psurface, &pixel, color);
